@@ -1,7 +1,8 @@
 # Embedded-Diploma
 This is a Repo for my Embedded AVR Diploma Work Space
 
-# AVR ( ATMEGA-16) MCU
+# Microcontroller
+AVR ( Atmega-16 )
 
 # Disscussed Topics
 - Intro to Embedded Systems
