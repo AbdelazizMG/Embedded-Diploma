@@ -18,7 +18,7 @@ This is a Repo for my Embedded AVR Diploma Drivers
 - EEPROM
 - RTOS
 
-# Prjoects
+# Projects
 - C Project
 - STOP WATCH
 - FAN CONTROLLER
