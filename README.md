@@ -1,5 +1,5 @@
 # Embedded-Diploma
-This is a Repo for my Embedded AVR Diploma Drivers
+This is a Repo for my Embedded AVR Diploma Work Space
 
 # AVR ( ATMEGA-16) MCU
 
