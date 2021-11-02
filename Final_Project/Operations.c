@@ -17,18 +17,12 @@
 #include "Timers.h"
 #include "UART.h"
 #include "avr/io.h"
-
+#include "seven_seg.h"
 /*******************************************************************************
 *                                                                              *
 *                              Global Variables                                *
 *                                                                              *
 ********************************************************************************/
-uint8 g_Password_Entry1[ARRAY_SIZE];
-uint8 g_Password_Entry2[ARRAY_SIZE];
-
-/*To be Deleted when writing EEPROM*/
-uint8 g_EEPROM_ARRAY[ARRAY_SIZE];
-
 /*Variable used in call back functions*/
 uint16 g_Interrupt_Number=0;
 
@@ -70,14 +64,14 @@ void OPERATION_EnterPassword(void)
 	   /*Get Keypress from the user*/
 	   key1 = KEYPAD_getPressedKey();
 
-	   /*Store keypress in the array*/
-	   g_Password_Entry1[counter]=key1;
-
 	   /*Display Key Press on LCD */
-	   LCD_intgerToString(key1);
+	 //  LCD_intgerToString(key1);
 
-	  // LCD_displayCharacter('*');
+	   LCD_displayCharacter('*');
 	   _delay_ms(800);
+
+	   /*Send First Digit by UART*/
+	   UART_sendByte(key1);
 
 	   /*Increament counter*/
 	   counter ++;
@@ -116,14 +110,14 @@ void OPERATION_reEnterPassword(void)
 	   /*Get Key press from the user*/
 	   key = KEYPAD_getPressedKey();
 
-	   /*Save the key press in the array*/
-	   g_Password_Entry2[counter]=key;
-
 	   /*Display Key Press on LCD*/
-	   LCD_intgerToString(key);
+	   //LCD_intgerToString(key);
 
-	  // LCD_displayCharacter('*');
+	   LCD_displayCharacter('*');
 	   _delay_ms(800);
+
+	   /*Send First Digit by UART*/
+	   UART_sendByte(key);
 
 	   /*Increament counter*/
 	   counter ++;
@@ -139,112 +133,51 @@ void OPERATION_reEnterPassword(void)
 * Parameters (inout): None
 * Parameters (out):   None
 * Return value:       None
-* Description:        Check Password Match between different entries
+* Description:        Receive Password Match Check from Second MCU and start
+*                     Taking action on displaing depending on the value received
 ********************************************************************************/
-void OPERATION_checkPasswordMatch(void)
+void OPERATION_ReceivecheckPasswordMatch(void)
 {
-   /*counter for while loop*/
-   uint8 counter = 0;
-
-   /*flag for matching detection - initially matched*/
-   uint8 flag = 1 ;
+   /*flag for matching detection - if 0 missmatch - if 1 matched*/
+   uint8 flag = 5 ;
 
    /*Variable to hold number of miss matches*/
    static uint8 missmatch_counter = 0;
 
-   /*Check Each Element in the Array*/
-   while (counter < 5 )
-   {
-       if ( g_Password_Entry1[counter] != g_Password_Entry2[counter])
-       {
-    	   flag = 0 ;
-       }
-       counter ++ ;
-   }
-
-  /*Reset Counter*/      /*To be deleted when writting EEPROM*/
-   counter=0;
+   /*Take Response from Second MCU - if 0 missmatch - if 1 matched */
+   flag = UART_receiveByte();
 
    switch (flag)
    {
       /*Missmatched Case*/
       /*Repeat Step 1 */
       case 0 :  missmatch_counter++;
+
+               _7seg_Write(missmatch_counter);
                 if(missmatch_counter== 3)
                 {
 
                 	LCD_clearScreen();
                 	LCD_displayString("Error");
-
-                	/* Send 'a' by UART to Second MCU to detect an error
-                	 * Turn ON BUZZER for 1-minute
-                	 */
-                	UART_sendByte('a');
                 	missmatch_counter = 0;
                 }
                 else
                 {
                 	OPERATION_EnterPassword();
                 	OPERATION_reEnterPassword();
-                	OPERATION_checkPasswordMatch();
+                	OPERATION_ReceivecheckPasswordMatch();
                 }
-
     	        break;
 
-      /*Matched Case*/
-
-      /*Save Password in EEPROM and Go to Main Options*/
+      /* Go to Main Options*/
       case 1 :
 
-    	  /*To Be deleted when writting EEPROM*/
-    	  /*Save Passowrd in EEPROM*/
+    	  _7seg_Write(0);
 
-    	  /*indicate that the following incoming data is to be saved in EEPROM*/
-    	  UART_sendByte('e');
-
-    	  while (counter < 5 )
-    	  {
-    		  g_EEPROM_ARRAY[counter]= g_Password_Entry1[counter];
-    		  UART_sendByte(g_Password_Entry1[counter]);
-    		  counter ++ ;
-    	  }
     	        /*Go to Main Options*/
     	        OPERATION_MainOptions();
     	        break;
    }
-}
-/*******************************************************************************
-* Service Name:       OPERATION_checkEEPROMMatch
-* Sync/Async:         Synchronous
-* Reentrancy:         Reentrant
-* Parameters (in):    None
-* Parameters (inout): None
-* Parameters (out):   None
-* Return value:       None
-* Description:        Check Password Match EEPROM and Entry
-********************************************************************************/
-uint8 OPERATION_checkEEPROMMatch(void)
-{
-	   /*counter for while loop*/
-	   uint8 counter = 0;
-
-	   /*flag for matching detection - initially matched*/
-	   uint8 flag = 1 ;
-
-
-
-	   while (counter < 5 )
-	   {
-		   if(g_EEPROM_ARRAY[counter] != g_Password_Entry1[counter])
-		   {
-			   flag = 0;
-		   }
-		   counter ++ ;
-	   }
-
-	   return flag;
-
-
 }
 /*******************************************************************************
 * Service Name:       OPERATION_MainOptions
@@ -280,25 +213,45 @@ void OPERATION_MainOptions(void)
 
 	_delay_ms(800);
 
+	/*Send User option input by UART*/
+	 UART_sendByte(key);
+
 	switch (key)
 	{
 	  /*Motor Drive Case*/
-	  case '+' :  /*Enter Password*/
+	  case '+' :
+		           /*Enter Password*/
 		          OPERATION_EnterPassword();
 
 	             /*IF matched with password saved in EEPROM - Drive Motor*/
-	             Motor_Drive_Check = OPERATION_checkEEPROMMatch();
+	             Motor_Drive_Check = UART_receiveByte();
+
+	             /*Miss Matched Case*/
+
+	            	 while ( Motor_Drive_Check != 1 )
+	            	 {
+	            		 missmatch_counter++;
+
+	            		 _7seg_Write(missmatch_counter);
+
+		            	 if(missmatch_counter == 3)
+		            	 {
+		                 	LCD_clearScreen();
+		                 	LCD_displayString("Error");
+		                 	missmatch_counter = 0;
+		                 	break;
+		            	 }
+
+	            		 /*Enter Password*/
+	            		 OPERATION_EnterPassword();
+	            		 Motor_Drive_Check = UART_receiveByte();
+
+	            	 }
 
 	             /*Matched Case*/
 	             if(Motor_Drive_Check == 1)
 	             {
-	            	 /*Send By UART something to drive Motor*
-	            	 *
-	            	 *
-	            	 */
-
-	            	 UART_sendByte('b');
-
+	            	 _7seg_Write(0);
 	            	 /*Init Timer*/
 	            	 Timer_init(&Config_Struct);
 
@@ -315,32 +268,7 @@ void OPERATION_MainOptions(void)
 	           	     Timer0_setCallBack(OPERATION_LCD_Control);
 
 	             }
-	             /*Miss Matched Case*/
-	             else
-	             {
-	            	 while ( Motor_Drive_Check != 1 )
-	            	 {
-	            		 missmatch_counter++;
-		            	 if(missmatch_counter == 3)
-		            	 {
-		                 	LCD_clearScreen();
-		                 	LCD_displayString("Error");
 
-		                 	/* Send 'a' by UART to Second MCU to detect an error
-		                 	 * Turn ON BUZZER for 1-minute
-		                 	 */
-		                 	UART_sendByte('a');
-		                 	missmatch_counter = 0;
-
-		                 	break;
-		            	 }
-
-	            		 /*Enter Password*/
-	            		 OPERATION_EnterPassword();
-	            		 Motor_Drive_Check = OPERATION_checkEEPROMMatch();
-
-	            	 }
-	            }
 
 	             break;
 
@@ -349,7 +277,7 @@ void OPERATION_MainOptions(void)
 		         /*repeat step 1*/
     	         OPERATION_EnterPassword();
     	         OPERATION_reEnterPassword();
-    	         OPERATION_checkPasswordMatch();
+    	         OPERATION_ReceivecheckPasswordMatch();
 
 	             break;
 	  default:
@@ -357,7 +285,7 @@ void OPERATION_MainOptions(void)
 	}
 }
 /*******************************************************************************
-* Service Name:       OPERATION_
+* Service Name:       OPERATION_LCD_Control
 * Sync/Async:         Synchronous
 * Reentrancy:         Reentrant
 * Parameters (in):    None

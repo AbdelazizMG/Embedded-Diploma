@@ -13,6 +13,8 @@
 #ifndef STD_TYPES_H_
 #define STD_TYPES_H_
 
+#define F_CPU 8000000
+
 /* Boolean Data Type */
 typedef unsigned char boolean;
 

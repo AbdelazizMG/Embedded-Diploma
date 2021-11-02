@@ -57,20 +57,10 @@ void OPERATION_reEnterPassword(void);
 * Parameters (inout): None
 * Parameters (out):   None
 * Return value:       None
-* Description:        Check Password Match between different entries
+* Description:       Receive Password Match Check from Second MCU and start
+*                    Taking action on displaing depending on the value received
 ********************************************************************************/
-void OPERATION_checkPasswordMatch(void);
-/*******************************************************************************
-* Service Name:       OPERATION_checkEEPROMMatch
-* Sync/Async:         Synchronous
-* Reentrancy:         Reentrant
-* Parameters (in):    None
-* Parameters (inout): None
-* Parameters (out):   None
-* Return value:       None
-* Description:        Check Password Match EEPROM and Entry
-********************************************************************************/
-uint8 OPERATION_checkEEPROMMatch(void);
+void OPERATION_ReceivecheckPasswordMatch(void);
 /*******************************************************************************
 * Service Name:       OPERATION_MainOptions
 * Sync/Async:         Synchronous

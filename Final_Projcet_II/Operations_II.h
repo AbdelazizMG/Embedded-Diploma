@@ -20,9 +20,59 @@ extern TIMER_ConfigType TIMER_Config_Struct;
 
 /*******************************************************************************
 *                                                                              *
+*                                  Definitions                                 *
+*                                                                              *
+********************************************************************************/
+#define ARRAY_SIZE 5
+/*******************************************************************************
+*                                                                              *
 *                              FUNCTIONS PROTOTYPE                             *
 *                                                                              *
 ********************************************************************************/
+/*******************************************************************************
+* Service Name:       OPERATION_II_ReceivePassword
+* Sync/Async:         Synchronous
+* Reentrancy:         Reentrantoopippp
+* Parameters (in):    None
+* Parameters (inout): None
+* Parameters (out):   None
+* Return value:       None
+* Description:        Receive First Password from First MCU
+********************************************************************************/
+void OPERATION_II_ReceivePassword(void);
+/*******************************************************************************
+* Service Name:       OPERATION_II_ReceiveSecondPassword
+* Sync/Async:         Synchronous
+* Reentrancy:         Reentrantoopippp
+* Parameters (in):    None
+* Parameters (inout): None
+* Parameters (out):   None
+* Return value:       None
+* Description:        Receive First Password from First MCU
+********************************************************************************/
+void OPERATION_II_ReceiveSecondPassword(void);
+/*******************************************************************************
+* Service Name:       OPERATION_II_checkPasswordMatch
+* Sync/Async:         Synchronous
+* Reentrancy:         Reentrant
+* Parameters (in):    None
+* Parameters (inout): None
+* Parameters (out):   None
+* Return value:       None
+* Description:        Check Password Match between different entries
+********************************************************************************/
+void OPERATION_II_checkPasswordMatch(void);
+/*******************************************************************************
+* Service Name:       OPERATION_checkEEPROMMatch
+* Sync/Async:         Synchronous
+* Reentrancy:         Reentrant
+* Parameters (in):    None
+* Parameters (inout): None
+* Parameters (out):   None
+* Return value:       None
+* Description:        Check Password Match EEPROM and Entry
+********************************************************************************/
+uint8 OPERATION_II_checkEEPROMMatch(void);
 /*******************************************************************************
 * Service Name:       Motor
 * Sync/Async:         Synchronous

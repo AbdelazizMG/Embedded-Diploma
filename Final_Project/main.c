@@ -18,6 +18,7 @@
 #include "UART.h"
 #include "Operations.h"
 #include "util/delay.h"
+#include "seven_seg.h"
 #include "avr/interrupt.h"
 
 
@@ -42,9 +43,16 @@ int main (void)
 	/*UART_Init*/
     UART_Init(&UART_ConfigStruct);
 
+    /*7seg to display number of wrong entries*/
+    _7seg_Setup(PORTB_ID, PIN3_ID);
+
+
+
+
+
     OPERATION_EnterPassword();
     OPERATION_reEnterPassword();
-    OPERATION_checkPasswordMatch();
+    OPERATION_ReceivecheckPasswordMatch();
 
 	while(1)
 	{

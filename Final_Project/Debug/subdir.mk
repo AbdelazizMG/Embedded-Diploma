@@ -12,7 +12,8 @@ C_SRCS += \
 ../gpio.c \
 ../keypad.c \
 ../lcd.c \
-../main.c 
+../main.c \
+../seven_seg.c 
 
 OBJS += \
 ./Buzzer.o \
@@ -23,7 +24,8 @@ OBJS += \
 ./gpio.o \
 ./keypad.o \
 ./lcd.o \
-./main.o 
+./main.o \
+./seven_seg.o 
 
 C_DEPS += \
 ./Buzzer.d \
@@ -34,7 +36,8 @@ C_DEPS += \
 ./gpio.d \
 ./keypad.d \
 ./lcd.d \
-./main.d 
+./main.d \
+./seven_seg.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

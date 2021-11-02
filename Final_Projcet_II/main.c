@@ -17,7 +17,7 @@
 #include "common_macros.h"
 #include "avr/io.h"
 #include "Operations_II.h"
-
+#define F_CPU 8000000
 
 extern uint16 g_Interrupts_number;
 
@@ -30,34 +30,18 @@ int main (void)
 	 {
 			 Transmitter_Receiver,
 			 Double_Speed,
-			 Asynchronous, Parity_Disabled,
+			 Asynchronous,
+			 Parity_Disabled,
 			 StopBit_1,
 			 DataFrame_8Bits,
 			 BaudRate_9600
 	 };
-	 /*Config Struct*/
-	 TIMER_ConfigType TIMER_Config_Struct =
-	 {
-			 Timer_2 ,
-			 CTC,
-			 Timer2_FCPU_1024,
-			 OF_Interrupt_Disable,
-			 OTC_Interrupt_Enable,
-			 OCPin_Disconnected,
-			 0,   /*TCNT*/
-			 254, /*OCR*/
-	 };
-
-
-
 
 	    /*Init Buzzer*/
-	    BUZZER_init(PORTC_ID, PIN0_ID);
+	    BUZZER_init(PORTC_ID, PIN2_ID);
 
 	    /*DC - Motor Init*/
 	    DC_MOTOR_Init();
-
-
 
 	    /*UART Init*/
 	    UART_Init(&UART_Config_Struct);

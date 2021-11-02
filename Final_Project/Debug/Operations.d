@@ -1,5 +1,6 @@
 Operations.o Operations.o: ../Operations.c ../LCD.h ../std_types.h \
-  ../keypad.h ../Operations.h ../common_macros.h ../Timers.h ../UART.h
+  ../keypad.h ../Operations.h ../common_macros.h ../Timers.h ../UART.h \
+  ../seven_seg.h
 
 ../LCD.h:
 
@@ -14,3 +15,5 @@ Operations.o Operations.o: ../Operations.c ../LCD.h ../std_types.h \
 ../Timers.h:
 
 ../UART.h:
+
+../seven_seg.h:

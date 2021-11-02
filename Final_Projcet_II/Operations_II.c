@@ -18,17 +18,200 @@
 #include "avr/io.h"
 #include "I2C.h"
 #include "external_eeprom.h"
+#include "util/delay.h"
 /*******************************************************************************
 *                                                                              *
 *                                  Global Variables                            *
 *                                                                              *
 ********************************************************************************/
 uint16 g_Interrupts_number = 0;
+
+uint8 g_Password_Entry1[ARRAY_SIZE];
+uint8 g_Password_Entry2[ARRAY_SIZE];
 /*******************************************************************************
 *                                                                              *
 *                              FUNCTIONS Definitions                           *
 *                                                                              *
 ********************************************************************************/
+/*******************************************************************************
+* Service Name:       OPERATION_ReceivePassword
+* Sync/Async:         Synchronous
+* Reentrancy:         Reentrantoopippp
+* Parameters (in):    None
+* Parameters (inout): None
+* Parameters (out):   None
+* Return value:       None
+* Description:        Receive First Password from First MCU
+********************************************************************************/
+void OPERATION_II_ReceivePassword(void)
+{
+   /*Variable to hold keypadd press*/
+	uint8 key1;
+
+   /*counter for while loop*/
+    uint8 counter = 0;
+
+   while ( counter < 5)
+   {
+       /*Receive Digit from first MCU*/
+	   key1 = UART_receiveByte();
+
+	   /*Store Digit in the array*/
+	   g_Password_Entry1[counter]=key1;
+
+	   /*Increament counter*/
+	   counter ++;
+   }
+
+
+}
+/*******************************************************************************
+* Service Name:       OPERATION_ReceiveSecondPassword
+* Sync/Async:         Synchronous
+* Reentrancy:         Reentrantoopippp
+* Parameters (in):    None
+* Parameters (inout): None
+* Parameters (out):   None
+* Return value:       None
+* Description:        Receive First Password from First MCU
+********************************************************************************/
+void OPERATION_II_ReceiveSecondPassword(void)
+{
+	   /*Variable to hold keypadd press*/
+		uint8 key1;
+
+	   /*counter for while loop*/
+	    uint8 counter = 0;
+
+	   while ( counter < 5)
+	   {
+	       /*Receive Digit from first MCU*/
+		   key1 = UART_receiveByte();
+
+		   /*Store Digit in the array*/
+		   g_Password_Entry2[counter]=key1;
+
+		   /*Increament counter*/
+		   counter ++;
+	   }
+}
+/*******************************************************************************
+* Service Name:       OPERATION_II_checkPasswordMatch
+* Sync/Async:         Synchronous
+* Reentrancy:         Reentrant
+* Parameters (in):    None
+* Parameters (inout): None
+* Parameters (out):   None
+* Return value:       None
+* Description:        Check Password Match between different entries
+********************************************************************************/
+void OPERATION_II_checkPasswordMatch(void)
+{
+	   /*Variable to be used in while loop*/
+	   uint8 counter = 0;
+
+	   /*flag for matching detection - if 0 missmatch - if 1 matched*/
+	   uint8 flag = 1 ;
+
+	   /*Variable to hold number of miss matches*/
+	   static uint8 missmatch_counter = 0;
+
+	   /*Check Each Element in the Array*/
+	   while (counter < 5 )
+	   {
+	       if ( g_Password_Entry1[counter] != g_Password_Entry2[counter])
+	       {
+	   	    flag = 0 ;
+	   	    break;
+	       }
+	       counter ++ ;
+	   }
+
+	   /*Resetting Counter for EEPROM LOOP*/
+	   counter = 0;
+
+     	/*Send to First MCU: 0 if dismatches , 1 if matches*/
+     	UART_sendByte(flag);
+
+	   switch (flag)
+	   {
+	      /*Missmatched Case*/
+	      /*Repeat Step 1 */
+	      case 0 :  missmatch_counter++;
+	                if(missmatch_counter== 3)
+	                {
+	            		BUZZER_ON();
+	            		Timer_init(&TIMER_Config_Struct);
+	            		Timer2_setCallBack(OPERATIONS_II_Buzzer);
+	            		g_Interrupts_number= 215;
+	                	missmatch_counter = 0;
+	                }
+	                else
+	                {
+	                	OPERATION_II_ReceivePassword();
+	                	OPERATION_II_ReceiveSecondPassword();
+	                	OPERATION_II_checkPasswordMatch();
+	                }
+	    	        break;
+
+	      /*Matched Case*/
+
+	      /* Go to Main Options*/
+	      case 1 :
+	    	  while (counter < 5 )
+	    	  {
+
+	          	EEPROM_writeByte((uint16)(EEPROM_ADDRESS + counter), g_Password_Entry1[counter]);
+	    		_delay_ms(10);
+
+	    		  counter ++ ;
+	    	  }
+
+	    	        break;
+
+	    	  /*Start Display Main Options*/
+	   }
+
+
+}
+/*******************************************************************************
+* Service Name:       OPERATION_checkEEPROMMatch
+* Sync/Async:         Synchronous
+* Reentrancy:         Reentrant
+* Parameters (in):    None
+* Parameters (inout): None
+* Parameters (out):   None
+* Return value:       None
+* Description:        Check Password Match EEPROM and Entry
+********************************************************************************/
+uint8 OPERATION_II_checkEEPROMMatch(void)
+{
+	   /*counter for while loop*/
+	   uint8 counter = 0;
+
+	   /*flag for matching detection - initially matched*/
+	   uint8 flag = 1 ;
+
+	   /*Variable to hold the value read from EEPROM*/
+       uint8 value = 0;
+
+	   while (counter < 5 )
+	   {
+		   /*read Byte from EEPROM*/
+		   EEPROM_readByte( (uint16)(EEPROM_ADDRESS + counter), &value);
+
+
+		   /*Check if any element is not matched*/
+		   if(g_Password_Entry1[counter] != value)
+		   {
+			   flag = 0;
+			   break;
+		   }
+		   counter ++ ;
+	   }
+
+	   return flag;
+}
 /*******************************************************************************
 * Service Name:       OPERATIONS_II_Motor
 * Sync/Async:         Synchronous
@@ -63,7 +246,7 @@ void OPERATIONS_II_Motor (void)
 	{
 		/*after holding motor for 3 seconds , rotate CCW for 5 seconds*/
 		DC_MOTOR_Rotate(CCW, 75);
-		g_Interrupts_number = 215;
+		g_Interrupts_number = 461;
 		counter = 0;
 	}
 	else if (counter == g_Interrupts_number && g_Interrupts_number == 215 )
@@ -105,54 +288,113 @@ void OPERATIONS_II_Buzzer (void)
 * Parameters (inout): None
 * Parameters (out):   None
 * Return value:       None
+* Description:        Function to Handle User Main Option from First MCU
+********************************************************************************/
+void OPERATIONS_II_Main_Options(void)
+{
+	/*Variable to Hold EEPROM Check*/
+	uint8 Motor_Drive_Check = 0;
+
+	/*Variable to hold number of miss matches*/
+	 static uint8 missmatch_counter = 0;
+
+	 /*Variable to Hold user input*/
+	 uint8 user_input=0;
+
+	/*4- Take User option input from first MCU by UART*/
+	user_input = UART_receiveByte();
+
+	switch ( user_input)
+	{
+
+	/* 5- Take Password for  '+' Entry and Compare with EEPROM and Send by UART Results */
+	case '+':
+		OPERATION_II_ReceivePassword();
+		Motor_Drive_Check = OPERATION_II_checkEEPROMMatch();
+		UART_sendByte(Motor_Drive_Check);
+
+
+			while ( Motor_Drive_Check == 0)
+			{
+				missmatch_counter++;
+
+				/*if Mismatches are 3 , Buzzer ON*/
+				if(missmatch_counter == 3)
+				{
+					BUZZER_ON();
+            		Timer_init(&TIMER_Config_Struct);
+            		Timer2_setCallBack(OPERATIONS_II_Buzzer);
+            		g_Interrupts_number= 215;
+					missmatch_counter = 0;
+					break;
+				}
+                /*Re-Enter Password and Check Again until 3 tries are done*/
+				OPERATION_II_ReceivePassword();
+				Motor_Drive_Check = OPERATION_II_checkEEPROMMatch();
+				UART_sendByte(Motor_Drive_Check);
+			}
+
+		/*Matches Case*/
+	    if ( Motor_Drive_Check == 1)
+		{
+			DC_MOTOR_Rotate(CW, 75);
+			Timer_init(&TIMER_Config_Struct);
+			Timer2_setCallBack(OPERATIONS_II_Motor);
+			g_Interrupts_number= 461;
+		}
+		         break;
+
+
+	case '-':    OPERATION_II_ReceivePassword();
+	             OPERATION_II_ReceiveSecondPassword();
+	             OPERATION_II_checkPasswordMatch();
+	             OPERATIONS_II_Main_Options();
+		         break;
+	}
+}
+/*******************************************************************************
+* Service Name:       OPERATIONS_II_UART_HANDLE
+* Sync/Async:         Synchronous
+* Reentrancy:         Reentrant
+* Parameters (in):    None
+* Parameters (inout): None
+* Parameters (out):   None
+* Return value:       None
 * Description:        Function to be called in main function to handle UART
 *                     input from first MCU.
 ********************************************************************************/
 void OPERATIONS_II_UART_HANDLE(const TIMER_ConfigType * TIMER_Config_STRUCT)
 {
-    /*Variable to hold UART Received PINS*/
-    uint8 key;
+	/*                                             STEPS
+	 * 1- Take First Password from First MCU
+	 * 2- Take Second Password from second MCU
+	 * 3- Check Password
+	 * - if Password is not Correct: it will repeat taking and comparing Passwords until
+	 *    user enter the right passoword or BUZZER will be on after 3 failures.
+	 * - if Password is Correct: Receive New Passoword and Compare it with one Saved in EEPROM
+	 *    and start Main Options.
+	 * 4- Take User option input from first MCU by UART
+	 * 5- Take Password for  '+' Entry and Compare with EEPROM and Send by UART Results:
+	 * - if Matches: Start Driving the Motor Function
+	 * - if Dismatches: Retake Password until it's right or after 3 times start Buzzer.
+	 * 6-
+	 *
+	 */
 
-    /*Take Flag from other MCU*/
-	key = UART_receiveByte();
 
-	/*Check Flag VAlue*/
-	if(key == 'b')
-	{
 
-	    DC_MOTOR_Rotate(CW, 75);
-	    Timer_init(TIMER_Config_STRUCT);
-	    Timer2_setCallBack(OPERATIONS_II_Motor);
-	    g_Interrupts_number= 461;
-	    key='a';
-	}
-	else if ( key == 'a')
-	{
-		BUZZER_ON();
-		Timer_init(TIMER_Config_STRUCT);
-		Timer2_setCallBack(OPERATIONS_II_Buzzer);
-		g_Interrupts_number= 215;
-		key = 'a';
-	}
-	/*indicates that the following password is to be saved in EEPROM*/
-	else if ( key == 'e' )
-	{
-		/*counter to be used in loop*/
-        uint8 counter = 0;
-        /*Variable to hold received passowrd digit*/
-        uint8 value= 0;
-        while (counter < 5 )
-        {
-        	/*Receive digit from first MCU*/
-        	value = UART_receiveByte();
+	/*  1-Take First Password from First MCU */
+	OPERATION_II_ReceivePassword();
 
-        	/*Save the digit in EEPROM*/
-        	EEPROM_writeByte(0x0000 + counter, value);
+	/*  2- Take Second Password from second MCU */
+	OPERATION_II_ReceiveSecondPassword();
 
-        	/*counter increament*/
-        	counter ++ ;
-        }
+	/*  3- Check Password */
+	OPERATION_II_checkPasswordMatch();
 
-	}
+	/*  Handle Steps: 4 - 5 -6 */
+	OPERATIONS_II_Main_Options();
+
+
 }
 

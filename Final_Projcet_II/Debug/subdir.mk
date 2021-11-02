@@ -6,30 +6,39 @@
 C_SRCS += \
 ../Buzzer.c \
 ../DC_Motor.c \
+../I2C.c \
 ../Operations_II.c \
 ../PWM.c \
+../TIMER_II_PBcfg.c \
 ../Timers.c \
 ../UART.c \
+../external_eeprom.c \
 ../gpio.c \
 ../main.c 
 
 OBJS += \
 ./Buzzer.o \
 ./DC_Motor.o \
+./I2C.o \
 ./Operations_II.o \
 ./PWM.o \
+./TIMER_II_PBcfg.o \
 ./Timers.o \
 ./UART.o \
+./external_eeprom.o \
 ./gpio.o \
 ./main.o 
 
 C_DEPS += \
 ./Buzzer.d \
 ./DC_Motor.d \
+./I2C.d \
 ./Operations_II.d \
 ./PWM.d \
+./TIMER_II_PBcfg.d \
 ./Timers.d \
 ./UART.d \
+./external_eeprom.d \
 ./gpio.d \
 ./main.d 
 
