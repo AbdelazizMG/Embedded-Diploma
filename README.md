@@ -8,10 +8,14 @@ AVR ( Atmega-16 )
 - Intro to Embedded Systems
 - C Programming Langauage
 - GPIO
+- PIR Sensor
 - Interrupts
 - Timers
 - Motors ( DC - Servo - Stipper )
 - ADC
+- LM35 Temperature Sensor
+- ICU
+- Ultrasonic Sensor
 - LCD
 - Keypad
 - UART
