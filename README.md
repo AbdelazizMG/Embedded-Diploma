@@ -10,6 +10,7 @@ AVR ( Atmega-16 )
 - GPIO
 - Interrupts
 - Timers
+- Motors ( DC - Servo - Stipper )
 - ADC
 - LCD
 - Keypad
