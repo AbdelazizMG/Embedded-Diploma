@@ -1,0 +1,43 @@
+/*
+ ============================================================================
+ Name        : GPIO_Exercise.c
+ Author      : Mohamed Tarek
+ Description : Test the GPIO Driver
+ Date        : 23/9/2021
+ ============================================================================
+ */
+
+#include "gpio.h"
+
+int main(void)
+{
+	uint8 value = 0;
+	GPIO_setupPinDirection(PORTA_ID,PIN2_ID,PIN_INPUT); /* PA2 Input Pin */
+	GPIO_setupPinDirection(PORTA_ID,PIN3_ID,PIN_INPUT); /* PA3 Input Pin */
+
+	GPIO_setupPortDirection(PORTC_ID,PORT_OUTPUT); /* All PORTC pins are o/p pins */
+	GPIO_writePort(PORTC_ID,value); /* All LEDS are OFF */
+
+	while(1)
+	{
+		/* Read PA2 Pin Value */
+		if(GPIO_readPin(PORTA_ID,PIN2_ID) == 1)
+		{
+			/* Toggle All LEDs*/
+			value ^= 0xFF;
+			_delay_ms(500);
+		}
+		/* Read PA3 Pin Value */
+		else if(PINA_REG.BITS.BIT3 == 1)
+		{
+			PORTC_REG.Data = 0xFF; /* All LEDS ON */
+		}
+		else
+		{
+			PORTC_REG.Data = 0; /* All LEDS OFF */
+		}
+
+	}
+}
+
+

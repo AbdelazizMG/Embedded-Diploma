@@ -1,0 +1,367 @@
+11:59:17 **** Build of configuration Debug for project GPIO_Exercise ****
+make all 
+Building file: ../GPIO_Exercise.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"GPIO_Exercise.d" -MT"GPIO_Exercise.o" -c -o "GPIO_Exercise.o" "../GPIO_Exercise.c"
+../GPIO_Exercise.c: In function 'main':
+../GPIO_Exercise.c:29: warning: implicit declaration of function '_delay_ms'
+Finished building: ../GPIO_Exercise.c
+ 
+Building file: ../gpio.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"gpio.d" -MT"gpio.o" -c -o "gpio.o" "../gpio.c"
+Finished building: ../gpio.c
+ 
+Building target: GPIO_Exercise.elf
+Invoking: AVR C Linker
+avr-gcc -Wl,-Map,GPIO_Exercise.map -mmcu=atmega16 -o "GPIO_Exercise.elf"  ./GPIO_Exercise.o ./gpio.o   
+./GPIO_Exercise.o: In function `main':
+../GPIO_Exercise.c:29: undefined reference to `_delay_ms'
+make: *** [GPIO_Exercise.elf] Error 1
+"make all" terminated with exit code 2. Build might be incomplete.
+11:59:42 **** Incremental Build of configuration Debug for project GPIO_Exercise ****
+make all 
+Building file: ../GPIO_Exercise.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"GPIO_Exercise.d" -MT"GPIO_Exercise.o" -c -o "GPIO_Exercise.o" "../GPIO_Exercise.c"
+In file included from ../GPIO_Exercise.c:11:
+c:/winavr-20100110/lib/gcc/../../avr/include/avr/delay.h:36:2: warning: #warning "This file has been moved to <util/delay.h>."
+In file included from c:/winavr-20100110/lib/gcc/../../avr/include/avr/delay.h:37,
+                 from ../GPIO_Exercise.c:11:
+c:/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+Finished building: ../GPIO_Exercise.c
+ 
+Building target: GPIO_Exercise.elf
+Invoking: AVR C Linker
+avr-gcc -Wl,-Map,GPIO_Exercise.map -mmcu=atmega16 -o "GPIO_Exercise.elf"  ./GPIO_Exercise.o ./gpio.o   
+Finished building target: GPIO_Exercise.elf
+ 
+Invoking: AVR Create Extended Listing
+avr-objdump -h -S GPIO_Exercise.elf  >"GPIO_Exercise.lss"
+Finished building: GPIO_Exercise.lss
+ 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega16 GPIO_Exercise.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    5000 bytes (30.5% Full)
+(.text + .data + .bootloader)
+
+Data:          8 bytes (0.8% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
+11:59:47 **** Incremental Build of configuration Debug for project GPIO_Exercise ****
+make all 
+Building file: ../GPIO_Exercise.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"GPIO_Exercise.d" -MT"GPIO_Exercise.o" -c -o "GPIO_Exercise.o" "../GPIO_Exercise.c"
+In file included from ../GPIO_Exercise.c:11:
+c:/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+Finished building: ../GPIO_Exercise.c
+ 
+Building target: GPIO_Exercise.elf
+Invoking: AVR C Linker
+avr-gcc -Wl,-Map,GPIO_Exercise.map -mmcu=atmega16 -o "GPIO_Exercise.elf"  ./GPIO_Exercise.o ./gpio.o   
+Finished building target: GPIO_Exercise.elf
+ 
+Invoking: AVR Create Extended Listing
+avr-objdump -h -S GPIO_Exercise.elf  >"GPIO_Exercise.lss"
+Finished building: GPIO_Exercise.lss
+ 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega16 GPIO_Exercise.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    5000 bytes (30.5% Full)
+(.text + .data + .bootloader)
+
+Data:          8 bytes (0.8% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
+12:03:39 **** Incremental Build of configuration Debug for project GPIO_Exercise ****
+make all 
+Building file: ../GPIO_Exercise.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"GPIO_Exercise.d" -MT"GPIO_Exercise.o" -c -o "GPIO_Exercise.o" "../GPIO_Exercise.c"
+In file included from ../GPIO_Exercise.c:11:
+c:/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+Finished building: ../GPIO_Exercise.c
+ 
+Building target: GPIO_Exercise.elf
+Invoking: AVR C Linker
+avr-gcc -Wl,-Map,GPIO_Exercise.map -mmcu=atmega16 -o "GPIO_Exercise.elf"  ./GPIO_Exercise.o ./gpio.o   
+Finished building target: GPIO_Exercise.elf
+ 
+Invoking: AVR Create Extended Listing
+avr-objdump -h -S GPIO_Exercise.elf  >"GPIO_Exercise.lss"
+Finished building: GPIO_Exercise.lss
+ 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega16 GPIO_Exercise.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    5008 bytes (30.6% Full)
+(.text + .data + .bootloader)
+
+Data:          8 bytes (0.8% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
+12:03:53 **** Incremental Build of configuration Debug for project GPIO_Exercise ****
+make all 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega16 GPIO_Exercise.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    5008 bytes (30.6% Full)
+(.text + .data + .bootloader)
+
+Data:          8 bytes (0.8% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
+12:08:06 **** Incremental Build of configuration Debug for project GPIO_Exercise ****
+make all 
+Building file: ../GPIO_Exercise.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"GPIO_Exercise.d" -MT"GPIO_Exercise.o" -c -o "GPIO_Exercise.o" "../GPIO_Exercise.c"
+In file included from ../GPIO_Exercise.c:11:
+c:/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+Finished building: ../GPIO_Exercise.c
+ 
+Building file: ../gpio.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"gpio.d" -MT"gpio.o" -c -o "gpio.o" "../gpio.c"
+Finished building: ../gpio.c
+ 
+Building target: GPIO_Exercise.elf
+Invoking: AVR C Linker
+avr-gcc -Wl,-Map,GPIO_Exercise.map -mmcu=atmega16 -o "GPIO_Exercise.elf"  ./GPIO_Exercise.o ./gpio.o   
+Finished building target: GPIO_Exercise.elf
+ 
+Invoking: AVR Create Extended Listing
+avr-objdump -h -S GPIO_Exercise.elf  >"GPIO_Exercise.lss"
+Finished building: GPIO_Exercise.lss
+ 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega16 GPIO_Exercise.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    5000 bytes (30.5% Full)
+(.text + .data + .bootloader)
+
+Data:          8 bytes (0.8% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
+12:15:30 **** Incremental Build of configuration Debug for project GPIO_Exercise ****
+make all 
+Building file: ../GPIO_Exercise.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"GPIO_Exercise.d" -MT"GPIO_Exercise.o" -c -o "GPIO_Exercise.o" "../GPIO_Exercise.c"
+In file included from ../GPIO_Exercise.c:11:
+c:/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+Finished building: ../GPIO_Exercise.c
+ 
+Building file: ../gpio.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"gpio.d" -MT"gpio.o" -c -o "gpio.o" "../gpio.c"
+Finished building: ../gpio.c
+ 
+Building target: GPIO_Exercise.elf
+Invoking: AVR C Linker
+avr-gcc -Wl,-Map,GPIO_Exercise.map -mmcu=atmega16 -o "GPIO_Exercise.elf"  ./GPIO_Exercise.o ./gpio.o   
+Finished building target: GPIO_Exercise.elf
+ 
+Invoking: AVR Create Extended Listing
+avr-objdump -h -S GPIO_Exercise.elf  >"GPIO_Exercise.lss"
+Finished building: GPIO_Exercise.lss
+ 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega16 GPIO_Exercise.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    5696 bytes (34.8% Full)
+(.text + .data + .bootloader)
+
+Data:          8 bytes (0.8% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
+22:29:04 **** Incremental Build of configuration Debug for project GPIO_Exercise ****
+make all 
+Building file: ../GPIO_Exercise.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"GPIO_Exercise.d" -MT"GPIO_Exercise.o" -c -o "GPIO_Exercise.o" "../GPIO_Exercise.c"
+In file included from ../GPIO_Exercise.c:11:
+c:/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+Finished building: ../GPIO_Exercise.c
+ 
+Building file: ../gpio.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"gpio.d" -MT"gpio.o" -c -o "gpio.o" "../gpio.c"
+Finished building: ../gpio.c
+ 
+Building target: GPIO_Exercise.elf
+Invoking: AVR C Linker
+avr-gcc -Wl,-Map,GPIO_Exercise.map -mmcu=atmega16 -o "GPIO_Exercise.elf"  ./GPIO_Exercise.o ./gpio.o   
+Finished building target: GPIO_Exercise.elf
+ 
+Invoking: AVR Create Extended Listing
+avr-objdump -h -S GPIO_Exercise.elf  >"GPIO_Exercise.lss"
+Finished building: GPIO_Exercise.lss
+ 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega16 GPIO_Exercise.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    5694 bytes (34.8% Full)
+(.text + .data + .bootloader)
+
+Data:          8 bytes (0.8% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
+23:10:38 **** Incremental Build of configuration Debug for project GPIO_Exercise ****
+make all 
+Building file: ../GPIO_Exercise.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"GPIO_Exercise.d" -MT"GPIO_Exercise.o" -c -o "GPIO_Exercise.o" "../GPIO_Exercise.c"
+In file included from ../GPIO_Exercise.c:11:
+c:/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+Finished building: ../GPIO_Exercise.c
+ 
+Building file: ../gpio.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"gpio.d" -MT"gpio.o" -c -o "gpio.o" "../gpio.c"
+Finished building: ../gpio.c
+ 
+Building target: GPIO_Exercise.elf
+Invoking: AVR C Linker
+avr-gcc -Wl,-Map,GPIO_Exercise.map -mmcu=atmega16 -o "GPIO_Exercise.elf"  ./GPIO_Exercise.o ./gpio.o   
+Finished building target: GPIO_Exercise.elf
+ 
+Invoking: AVR Create Extended Listing
+avr-objdump -h -S GPIO_Exercise.elf  >"GPIO_Exercise.lss"
+Finished building: GPIO_Exercise.lss
+ 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega16 GPIO_Exercise.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    5694 bytes (34.8% Full)
+(.text + .data + .bootloader)
+
+Data:          8 bytes (0.8% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
+23:11:43 **** Incremental Build of configuration Debug for project GPIO_Exercise ****
+make all 
+Building file: ../GPIO_Exercise.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"GPIO_Exercise.d" -MT"GPIO_Exercise.o" -c -o "GPIO_Exercise.o" "../GPIO_Exercise.c"
+In file included from ../GPIO_Exercise.c:11:
+c:/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+Finished building: ../GPIO_Exercise.c
+ 
+Building target: GPIO_Exercise.elf
+Invoking: AVR C Linker
+avr-gcc -Wl,-Map,GPIO_Exercise.map -mmcu=atmega16 -o "GPIO_Exercise.elf"  ./GPIO_Exercise.o ./gpio.o   
+Finished building target: GPIO_Exercise.elf
+ 
+Invoking: AVR Create Extended Listing
+avr-objdump -h -S GPIO_Exercise.elf  >"GPIO_Exercise.lss"
+Finished building: GPIO_Exercise.lss
+ 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega16 GPIO_Exercise.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    5694 bytes (34.8% Full)
+(.text + .data + .bootloader)
+
+Data:          8 bytes (0.8% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
+23:14:58 **** Incremental Build of configuration Debug for project GPIO_Exercise ****
+make all 
+Building file: ../GPIO_Exercise.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"GPIO_Exercise.d" -MT"GPIO_Exercise.o" -c -o "GPIO_Exercise.o" "../GPIO_Exercise.c"
+In file included from ../GPIO_Exercise.c:11:
+c:/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+Finished building: ../GPIO_Exercise.c
+ 
+Building file: ../gpio.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"gpio.d" -MT"gpio.o" -c -o "gpio.o" "../gpio.c"
+../gpio.c: In function 'GPIO_readPin':
+../gpio.c:101: warning: control reaches end of non-void function
+../gpio.c: In function 'GPIO_readPort':
+../gpio.c:161: warning: control reaches end of non-void function
+Finished building: ../gpio.c
+ 
+Building target: GPIO_Exercise.elf
+Invoking: AVR C Linker
+avr-gcc -Wl,-Map,GPIO_Exercise.map -mmcu=atmega16 -o "GPIO_Exercise.elf"  ./GPIO_Exercise.o ./gpio.o   
+Finished building target: GPIO_Exercise.elf
+ 
+Invoking: AVR Create Extended Listing
+avr-objdump -h -S GPIO_Exercise.elf  >"GPIO_Exercise.lss"
+Finished building: GPIO_Exercise.lss
+ 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega16 GPIO_Exercise.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    4744 bytes (29.0% Full)
+(.text + .data + .bootloader)
+
+Data:          8 bytes (0.8% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
