@@ -34,7 +34,9 @@ int main (void)
 			 Parity_Disabled,
 			 StopBit_1,
 			 DataFrame_8Bits,
-			 BaudRate_9600
+			 BaudRate_9600,
+			 RX_InterruptDisable,
+			 TX_InterruptDisable
 	 };
 
 	    /*Init Buzzer*/

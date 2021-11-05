@@ -9,6 +9,7 @@
 *                                  INCLUDES                                    *
 *                                                                              *
 ********************************************************************************/
+#define F_CPU 8000000
 #include "Operations_II.h"
 #include "PWM.h"
 #include "DC_Motor.h"
@@ -51,16 +52,25 @@ void OPERATION_II_ReceivePassword(void)
    /*counter for while loop*/
     uint8 counter = 0;
 
-   while ( counter < 5)
+   while ( counter < PASSWORD_DIGITS_NUMBER )
    {
        /*Receive Digit from first MCU*/
 	   key1 = UART_receiveByte();
 
-	   /*Store Digit in the array*/
-	   g_Password_Entry1[counter]=key1;
+	   if(key1 != '*')
+	   {
+		   /*Store Digit in the array*/
+		   g_Password_Entry1[counter]=key1;
 
-	   /*Increament counter*/
-	   counter ++;
+		   /*Increament counter*/
+		   counter ++;
+	   }
+	   else if ( key1 == '*' && counter !=0)
+	   {
+		   counter = counter-1;
+	   }
+
+
    }
 
 
@@ -83,16 +93,25 @@ void OPERATION_II_ReceiveSecondPassword(void)
 	   /*counter for while loop*/
 	    uint8 counter = 0;
 
-	   while ( counter < 5)
+	   while ( counter < PASSWORD_DIGITS_NUMBER )
 	   {
 	       /*Receive Digit from first MCU*/
 		   key1 = UART_receiveByte();
 
-		   /*Store Digit in the array*/
-		   g_Password_Entry2[counter]=key1;
+		   if(key1 != '*')
+		   {
+			   /*Store Digit in the array*/
+			   g_Password_Entry2[counter]=key1;
 
-		   /*Increament counter*/
-		   counter ++;
+			   /*Increament counter*/
+			   counter ++;
+		   }
+		   else if ( key1 == '*' && counter !=0)
+		   {
+			   counter = counter - 1;
+		   }
+
+
 	   }
 }
 /*******************************************************************************
@@ -117,7 +136,7 @@ void OPERATION_II_checkPasswordMatch(void)
 	   static uint8 missmatch_counter = 0;
 
 	   /*Check Each Element in the Array*/
-	   while (counter < 5 )
+	   while (counter < PASSWORD_DIGITS_NUMBER )
 	   {
 	       if ( g_Password_Entry1[counter] != g_Password_Entry2[counter])
 	       {
@@ -138,7 +157,7 @@ void OPERATION_II_checkPasswordMatch(void)
 	      /*Missmatched Case*/
 	      /*Repeat Step 1 */
 	      case 0 :  missmatch_counter++;
-	                if(missmatch_counter== 3)
+	                if(missmatch_counter== MAX_WRONG_ENTRY_NUMBER)
 	                {
 	            		BUZZER_ON();
 	            		Timer_init(&TIMER_Config_Struct);
@@ -234,28 +253,31 @@ void OPERATIONS_II_Motor (void)
 	counter ++ ;
 
 	/*for 5 seconds*/
-	if(counter == g_Interrupts_number && g_Interrupts_number == 461 && flag ==0)
+	if(counter == g_Interrupts_number && g_Interrupts_number == DOOR_OPEN_TIMER_VALUE && flag ==0)
 	{
+		_delay_ms(800);
 		DC_MOTOR_Rotate(Stop, 0);
 		counter = 0;
 		/*Get ready for holding motor 3 seconds*/
-		g_Interrupts_number = 92;
+		g_Interrupts_number = DOOR_HOLD_TIMER_VALUE;
 		flag = 1;
 	}
-	else if (counter == g_Interrupts_number && g_Interrupts_number == 92 )
+	else if (counter == g_Interrupts_number && g_Interrupts_number == DOOR_HOLD_TIMER_VALUE )
 	{
-		/*after holding motor for 3 seconds , rotate CCW for 5 seconds*/
+		/*after holding motor for 3 seconds , rotate CCW for 15 seconds*/
+
 		DC_MOTOR_Rotate(CCW, 75);
-		g_Interrupts_number = 461;
+		g_Interrupts_number = DOOR_CLOSE_TIMER_VALUE;
 		counter = 0;
 	}
-	else if (counter == g_Interrupts_number && g_Interrupts_number == 215 )
+	else if (counter == g_Interrupts_number && g_Interrupts_number == DOOR_CLOSE_TIMER_VALUE && flag == 1 )
 	{
-		/*after 5 seconds stop the motor and display finished*/
+		/*after 15 seconds stop the motor and display finished*/
 		DC_MOTOR_Rotate(Stop, 0);
 		flag = 0 ;
 		counter = 0;
 		Timer_Deinit(2);
+		OPERATIONS_II_Main_Options();
 	}
 }
 /*******************************************************************************
@@ -281,7 +303,7 @@ void OPERATIONS_II_Buzzer (void)
    }
 }
 /*******************************************************************************
-* Service Name:       OPERATIONS_II_UART_HANDLE
+* Service Name:       OPERATIONS_II_Main_Options
 * Sync/Async:         Synchronous
 * Reentrancy:         Reentrant
 * Parameters (in):    None
@@ -304,59 +326,60 @@ void OPERATIONS_II_Main_Options(void)
 	/*4- Take User option input from first MCU by UART*/
 	user_input = UART_receiveByte();
 
-	switch ( user_input)
-	{
-
 	/* 5- Take Password for  '+' Entry and Compare with EEPROM and Send by UART Results */
-	case '+':
+
+	OPERATION_II_ReceivePassword();
+	Motor_Drive_Check = OPERATION_II_checkEEPROMMatch();
+	UART_sendByte(Motor_Drive_Check);
+
+
+	while ( Motor_Drive_Check == 0)
+	{
+		missmatch_counter++;
+
+		/*if Mismatches are 3 , Buzzer ON*/
+		if(missmatch_counter == MAX_WRONG_ENTRY_NUMBER)
+		{
+			BUZZER_ON();
+			Timer_init(&TIMER_Config_Struct);
+			Timer2_setCallBack(OPERATIONS_II_Buzzer);
+			g_Interrupts_number= BUZZER_ON_TIMER_VALUE;
+			missmatch_counter = 0;
+			break;
+		}
+		/*Re-Enter Password and Check Again until 3 tries are done*/
 		OPERATION_II_ReceivePassword();
 		Motor_Drive_Check = OPERATION_II_checkEEPROMMatch();
 		UART_sendByte(Motor_Drive_Check);
-
-
-			while ( Motor_Drive_Check == 0)
-			{
-				missmatch_counter++;
-
-				/*if Mismatches are 3 , Buzzer ON*/
-				if(missmatch_counter == 3)
-				{
-					BUZZER_ON();
-            		Timer_init(&TIMER_Config_Struct);
-            		Timer2_setCallBack(OPERATIONS_II_Buzzer);
-            		g_Interrupts_number= 215;
-					missmatch_counter = 0;
-					break;
-				}
-                /*Re-Enter Password and Check Again until 3 tries are done*/
-				OPERATION_II_ReceivePassword();
-				Motor_Drive_Check = OPERATION_II_checkEEPROMMatch();
-				UART_sendByte(Motor_Drive_Check);
-			}
+    }
 
 		/*Matches Case*/
 	    if ( Motor_Drive_Check == 1)
 		{
-			DC_MOTOR_Rotate(CW, 75);
-			Timer_init(&TIMER_Config_Struct);
-			Timer2_setCallBack(OPERATIONS_II_Motor);
-			g_Interrupts_number= 461;
+	    	switch( user_input)
+	    	{
+	    	case '+':
+	    		Timer_init(&TIMER_Config_Struct);
+	    		Timer2_setCallBack(OPERATIONS_II_Motor);
+	    		g_Interrupts_number= DOOR_OPEN_TIMER_VALUE;
+                _delay_ms(800);
+	    		DC_MOTOR_Rotate(CW, 75);
+	    		       break;
+	    	case '-':
+	    		OPERATION_II_ReceivePassword();
+	    		OPERATION_II_ReceiveSecondPassword();
+	    		OPERATION_II_checkPasswordMatch();
+	    		OPERATIONS_II_Main_Options();
+	    		       break;
+	    	}
+
 		}
-		         break;
-
-
-	case '-':    OPERATION_II_ReceivePassword();
-	             OPERATION_II_ReceiveSecondPassword();
-	             OPERATION_II_checkPasswordMatch();
-	             OPERATIONS_II_Main_Options();
-		         break;
-	}
 }
 /*******************************************************************************
 * Service Name:       OPERATIONS_II_UART_HANDLE
 * Sync/Async:         Synchronous
-* Reentrancy:         Reentrant
-* Parameters (in):    None
+* Reentrancy:         Non-Reentrant
+* Parameters (in):    Timer Config Struct
 * Parameters (inout): None
 * Parameters (out):   None
 * Return value:       None

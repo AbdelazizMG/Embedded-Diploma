@@ -22,6 +22,11 @@
 *                                                                              *
 ********************************************************************************/
 #define ARRAY_SIZE 5
+#define DOOR_OPEN_TIMER_VALUE  461
+#define DOOR_CLOSE_TIMER_VALUE 461
+#define DOOR_HOLD_TIMER_VALUE  92
+#define PASSWORD_DIGITS_NUMBER 5
+#define MAX_WRONG_ENTRY_NUMBER 3
 /*******************************************************************************
 *                                                                              *
 *                                  FUNCTIONS PROTOTYPE                         *
@@ -35,7 +40,7 @@
 * Parameters (inout): None
 * Parameters (out):   None
 * Return value:       None
-* Description:        Ask useer to enter the password
+* Description:        Ask user to enter the password
 ********************************************************************************/
 void OPERATION_EnterPassword(void);
 /*******************************************************************************
@@ -46,7 +51,7 @@ void OPERATION_EnterPassword(void);
 * Parameters (inout): None
 * Parameters (out):   None
 * Return value:       None
-* Description:        Ask useer to re-enter the password
+* Description:        Ask user to re-enter the password
 ********************************************************************************/
 void OPERATION_reEnterPassword(void);
 /*******************************************************************************

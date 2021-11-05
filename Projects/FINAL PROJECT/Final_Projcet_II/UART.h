@@ -16,6 +16,13 @@
 #include "std_types.h"
 /*******************************************************************************
 *                                                                              *
+*                                  Definitions                                 *
+*                                                                              *
+********************************************************************************/
+
+
+/*******************************************************************************
+*                                                                              *
 *                       External   Global Variables                            *
 *                                                                              *
 ********************************************************************************/
@@ -112,6 +119,28 @@ typedef enum
 	BaudRate_115200,
 }Baud_Rate;
 /*******************************************************************************
+* Name: RX_Interrupt
+* Type: Enumeration
+* Range: RX_InterruptDisable - RX_InterruptEnable
+* Description: Data Type for symbolic name for UART RX Interrupt
+********************************************************************************/
+typedef enum
+{
+	RX_InterruptDisable,
+	RX_InterruptEnable,
+}RX_Interrupt;
+/*******************************************************************************
+* Name: TX_Interrupt
+* Type: Enumeration
+* Range: TX_InterruptDisable - TX_InterruptEnable
+* Description: Data Type for symbolic name for UART TX Interrupt
+********************************************************************************/
+typedef enum
+{
+	TX_InterruptDisable,
+	TX_InterruptEnable,
+}TX_Interrupt;
+/*******************************************************************************
 * Name: UART_ConfigType
 * Type: Structure
 * Range: Hardware dependent structure
@@ -128,6 +157,8 @@ typedef struct
 	Stop_Bit stop_bit;
 	DataFrame_Bits dataframe_bits;
 	Baud_Rate baud_rate;
+	RX_Interrupt rx_interrupt;
+	TX_Interrupt tx_interrupt;
 }UART_ConfigType;
 /*******************************************************************************
 *                                                                              *

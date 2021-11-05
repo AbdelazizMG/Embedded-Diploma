@@ -42,7 +42,8 @@ extern const TIMER_ConfigType Config_Struct;
 * Parameters (inout): None
 * Parameters (out):   None
 * Return value:       None
-* Description:        Ask user to enter the password
+* Description:        Ask user to enter the password , with option to delete wrong
+*                     Click.
 ********************************************************************************/
 void OPERATION_EnterPassword(void)
 {
@@ -59,22 +60,38 @@ void OPERATION_EnterPassword(void)
    LCD_displayString("Enter Password:");
    LCD_moveCursor(1, 0);
 
-   while ( counter < 5)
+   while ( counter < PASSWORD_DIGITS_NUMBER)
    {
 	   /*Get Keypress from the user*/
 	   key1 = KEYPAD_getPressedKey();
 
-	   /*Display Key Press on LCD */
-	 //  LCD_intgerToString(key1);
-
-	   LCD_displayCharacter('*');
-	   _delay_ms(800);
-
-	   /*Send First Digit by UART*/
 	   UART_sendByte(key1);
 
-	   /*Increament counter*/
-	   counter ++;
+	   /*Option to delete wrong Click*/
+	   if(key1 == '*' && counter !=0)
+	   {
+
+		   LCD_moveCursor(1, counter-1);
+		   LCD_displayCharacter(' ');
+		   LCD_moveCursor(1, counter-1);
+		   counter= counter - 1 ;
+		   _delay_ms(800);
+
+	   }
+	   else if (key1 != '*')
+	   {
+		   /*Display Key Press on LCD */
+		   LCD_displayCharacter('*');
+
+		   _delay_ms(800);
+
+
+
+		   /*Increament counter*/
+		   counter ++;
+	   }
+
+
    }
 
 
@@ -87,7 +104,7 @@ void OPERATION_EnterPassword(void)
 * Parameters (inout): None
 * Parameters (out):   None
 * Return value:       None
-* Description:        Ask useer to re-enter the password
+* Description:        Ask user to re-enter the password
 ********************************************************************************/
 void OPERATION_reEnterPassword(void)
 {
@@ -105,22 +122,37 @@ void OPERATION_reEnterPassword(void)
    LCD_moveCursor(1, 0);
 
    /*Take 5 digits from the user*/
-   while ( counter < 5)
+   while ( counter < PASSWORD_DIGITS_NUMBER )
    {
 	   /*Get Key press from the user*/
 	   key = KEYPAD_getPressedKey();
 
-	   /*Display Key Press on LCD*/
-	   //LCD_intgerToString(key);
 
-	   LCD_displayCharacter('*');
-	   _delay_ms(800);
+	   /*Option to delete wrong Click*/
+	   if(key == '*' && counter !=0)
+	   {
+		   UART_sendByte(key);
+		   LCD_moveCursor(1, counter-1);
+		   LCD_displayCharacter(' ');
+		   LCD_moveCursor(1, counter-1);
+		   counter= counter - 1 ;
+		   _delay_ms(800);
 
-	   /*Send First Digit by UART*/
-	   UART_sendByte(key);
+	   }
+	   else if ( key != '*')
+	   {
+		   /*Display Key Press on LCD*/
 
-	   /*Increament counter*/
-	   counter ++;
+		   LCD_displayCharacter('*');
+		   _delay_ms(800);
+
+		   /*Send First Digit by UART*/
+		   UART_sendByte(key);
+
+		   /*Increament counter*/
+		   counter ++;
+	   }
+
    }
 
 
@@ -154,7 +186,7 @@ void OPERATION_ReceivecheckPasswordMatch(void)
       case 0 :  missmatch_counter++;
 
                _7seg_Write(missmatch_counter);
-                if(missmatch_counter== 3)
+                if(missmatch_counter== MAX_WRONG_ENTRY_NUMBER)
                 {
 
                 	LCD_clearScreen();
@@ -172,7 +204,7 @@ void OPERATION_ReceivecheckPasswordMatch(void)
       /* Go to Main Options*/
       case 1 :
 
-    	  _7seg_Write(0);
+    	        _7seg_Write(0);
 
     	        /*Go to Main Options*/
     	        OPERATION_MainOptions();
@@ -216,73 +248,77 @@ void OPERATION_MainOptions(void)
 	/*Send User option input by UART*/
 	 UART_sendByte(key);
 
-	switch (key)
-	{
-	  /*Motor Drive Case*/
-	  case '+' :
-		           /*Enter Password*/
-		          OPERATION_EnterPassword();
 
-	             /*IF matched with password saved in EEPROM - Drive Motor*/
-	             Motor_Drive_Check = UART_receiveByte();
+	 /*Enter Password*/
+	 OPERATION_EnterPassword();
 
-	             /*Miss Matched Case*/
+	 /*IF matched with password saved in EEPROM - Drive Motor*/
+	 Motor_Drive_Check = UART_receiveByte();
 
-	            	 while ( Motor_Drive_Check != 1 )
-	            	 {
-	            		 missmatch_counter++;
+	 /*Miss Matched Case*/
 
-	            		 _7seg_Write(missmatch_counter);
+	 while ( Motor_Drive_Check == 0 )
+	 {
+		 missmatch_counter++;
 
-		            	 if(missmatch_counter == 3)
-		            	 {
-		                 	LCD_clearScreen();
-		                 	LCD_displayString("Error");
-		                 	missmatch_counter = 0;
-		                 	break;
-		            	 }
+		 _7seg_Write(missmatch_counter);
 
-	            		 /*Enter Password*/
-	            		 OPERATION_EnterPassword();
-	            		 Motor_Drive_Check = UART_receiveByte();
+		 if(missmatch_counter == MAX_WRONG_ENTRY_NUMBER)
+		 {
+			 LCD_clearScreen();
+			 LCD_displayString("Error");
+			 missmatch_counter = 0;
+			 break;
+		 }
 
-	            	 }
+		 /*Enter Password*/
+		 OPERATION_EnterPassword();
+		 Motor_Drive_Check = UART_receiveByte();
 
-	             /*Matched Case*/
-	             if(Motor_Drive_Check == 1)
-	             {
-	            	 _7seg_Write(0);
-	            	 /*Init Timer*/
-	            	 Timer_init(&Config_Struct);
+	 }
 
-	            	 /*I-Bit*/
-	            	 SET_BIT(SREG,7);
+	 /*Matched Case*/
+	 if(Motor_Drive_Check == 1)
+	 {
+		 switch (key)
+		 {
+		 case '+':
 
-	            	 LCD_clearScreen();
-	            	 LCD_displayString("Opening Door");
+		 LCD_clearScreen();
+		 LCD_displayString("Opening Door");
 
-	            	 /*Setting Time for 15 seconds*/
-	            	 g_Interrupt_Number=461;
-
-	            	 /*Start Taking ACTION in ISR*/
-	           	     Timer0_setCallBack(OPERATION_LCD_Control);
-
-	             }
+		 _7seg_Write(0);
 
 
-	             break;
+		 /*Init Timer*/
+		 Timer_init(&Config_Struct);
 
-	 /*Change Password Case*/
-	  case '-' :
-		         /*repeat step 1*/
-    	         OPERATION_EnterPassword();
-    	         OPERATION_reEnterPassword();
-    	         OPERATION_ReceivecheckPasswordMatch();
+		 /*I-Bit*/
+		 SET_BIT(SREG,7);
 
-	             break;
-	  default:
-		         break;
-	}
+		 /*Setting Time for 15 seconds*/
+		 g_Interrupt_Number=DOOR_OPEN_TIMER_VALUE;
+
+		 /*Start Taking ACTION in ISR*/
+		 Timer0_setCallBack(OPERATION_LCD_Control);
+		 break;
+
+
+		 /*Change Password Case*/
+		 case '-' :
+			 /*repeat step 1*/
+			 OPERATION_EnterPassword();
+			 OPERATION_reEnterPassword();
+			 OPERATION_ReceivecheckPasswordMatch();
+			 break;
+
+		 default:
+			 break;
+
+		 }
+
+     }
+
 }
 /*******************************************************************************
 * Service Name:       OPERATION_LCD_Control
@@ -308,28 +344,32 @@ void OPERATION_LCD_Control(void)
 	counter ++ ;
 
 	/*Holdind Motor for three seconds perparing for second rotation*/
-	if(counter ==  g_Interrupt_Number && g_Interrupt_Number == 461 && flag ==0)
+	if(counter ==  g_Interrupt_Number && g_Interrupt_Number == DOOR_OPEN_TIMER_VALUE && flag ==0)
 	{
 		LCD_clearScreen();
-		LCD_displayString("Holding Motor");
-   	    g_Interrupt_Number=92;
+		LCD_displayString("Holding Door");
+
+   	    g_Interrupt_Number= DOOR_HOLD_TIMER_VALUE;
 		counter=0;
 		flag = 1;
 	}
 	/*Rotating Motor in CCW Direction*/
-	else if (counter ==  g_Interrupt_Number && g_Interrupt_Number == 92)
+	else if (counter ==  g_Interrupt_Number && g_Interrupt_Number == DOOR_HOLD_TIMER_VALUE)
 	{
    	      LCD_clearScreen();
    	      LCD_displayString("Closing Door");
-   	      g_Interrupt_Number=215;
+
+   	      g_Interrupt_Number= DOOR_CLOSE_TIMER_VALUE;
    	      counter = 0;
 	}
-	/*after 5 seconds stop the timer*/
-	else if(counter ==  g_Interrupt_Number && g_Interrupt_Number == 215 && flag ==1)
+	/*after 15 seconds stop the timer*/
+	else if(counter ==  g_Interrupt_Number && g_Interrupt_Number == DOOR_CLOSE_TIMER_VALUE && flag ==1)
 	{
- 	    LCD_clearScreen();
- 	    LCD_displayString("Finished");
-		Timer_Deinit(0);
+        counter=0;
+        flag=0;
+        Timer_Deinit(0);
+        OPERATION_MainOptions();
+
 
 	}
 

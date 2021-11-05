@@ -1,6 +1,6 @@
 /******************************************************************************
 *  Module:    UART
-*  File name: UART.h
+*  File name: UART.c
 *  Created on: Oct 10, 2021
 *  Author: Abdelaziz Mohammad
 *******************************************************************************/
@@ -12,6 +12,7 @@
 #include "UART.h"
 #include "std_types.h"
 #include "avr/io.h"
+#include "avr/interrupt.h"
 #include "common_macros.h"
 /*******************************************************************************
 *                                                                              *
@@ -20,6 +21,20 @@
 ********************************************************************************/
  uint16 g_UBRR_value = 0;
  uint8  g_speed_mode_division_factor = 0;
+ /*******************************************************************************
+ *                                                                              *
+ *                          Interrupt Service Routine                           *
+ *                                                                              *
+ ********************************************************************************/
+ISR(USART_RXC_vect)
+ {
+
+ }
+
+ISR(USART_TXC_vect)
+ {
+
+ }
 /*******************************************************************************
 *                                                                              *
 *                              FUNCTIONS Definitions                           *
@@ -137,6 +152,26 @@ void UART_Init(const UART_ConfigType * Config_Ptr)
     	                  break;
     }
 
+    /*Config RX Interrupt*/
+    switch(Config_Ptr ->rx_interrupt)
+    {
+    case RX_InterruptDisable: CLEAR_BIT(UCSRB,RXCIE);
+                              break;
+    case RX_InterruptEnable:  SET_BIT(UCSRB,RXCIE);
+                              break;
+
+    }
+
+    /*Config TX Interrupt*/
+    switch(Config_Ptr ->tx_interrupt)
+    {
+    case TX_InterruptDisable: CLEAR_BIT(UCSRB,TXCIE);
+                              break;
+    case TX_InterruptEnable:  SET_BIT(UCSRB,TXCIE);
+                              break;
+
+    }
+
 
 
 
@@ -176,7 +211,7 @@ uint8 UART_receiveByte (void)
 /*******************************************************************************
 * Service Name:       UART_sendString
 * Sync/Async:         Synchronous
-* Reentrancy:         Reentrant
+* Reentrancy:         Non-Reentrant
 * Parameters (in):    String to be sent
 * Parameters (inout): None
 * Parameters (out):   None
@@ -197,7 +232,7 @@ void UART_sendString( const uint8 * Str)
 /*******************************************************************************
 * Service Name:       UART_receiveString
 * Sync/Async:         Synchronous
-* Reentrancy:         Reentrant
+* Reentrancy:         Non-Reentrant
 * Parameters (in):    None
 * Parameters (inout): None
 * Parameters (out):   None

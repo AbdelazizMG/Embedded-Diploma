@@ -24,6 +24,12 @@ extern TIMER_ConfigType TIMER_Config_Struct;
 *                                                                              *
 ********************************************************************************/
 #define ARRAY_SIZE 5
+#define DOOR_OPEN_TIMER_VALUE  461
+#define DOOR_CLOSE_TIMER_VALUE 461
+#define DOOR_HOLD_TIMER_VALUE  92
+#define BUZZER_ON_TIMER_VALUE  1845
+#define PASSWORD_DIGITS_NUMBER 5
+#define MAX_WRONG_ENTRY_NUMBER 3
 /*******************************************************************************
 *                                                                              *
 *                              FUNCTIONS PROTOTYPE                             *
@@ -32,7 +38,7 @@ extern TIMER_ConfigType TIMER_Config_Struct;
 /*******************************************************************************
 * Service Name:       OPERATION_II_ReceivePassword
 * Sync/Async:         Synchronous
-* Reentrancy:         Reentrantoopippp
+* Reentrancy:         Reentrant
 * Parameters (in):    None
 * Parameters (inout): None
 * Parameters (out):   None
@@ -43,7 +49,7 @@ void OPERATION_II_ReceivePassword(void);
 /*******************************************************************************
 * Service Name:       OPERATION_II_ReceiveSecondPassword
 * Sync/Async:         Synchronous
-* Reentrancy:         Reentrantoopippp
+* Reentrancy:         Reentrant
 * Parameters (in):    None
 * Parameters (inout): None
 * Parameters (out):   None
@@ -96,9 +102,20 @@ void OPERATIONS_II_Motor (void);
 ********************************************************************************/
 void OPERATIONS_II_Buzzer (void);
 /*******************************************************************************
-* Service Name:       OPERATIONS_II_UART_HANDLE
+* Service Name:       OPERATIONS_II_Main_Options
 * Sync/Async:         Synchronous
 * Reentrancy:         Reentrant
+* Parameters (in):    None
+* Parameters (inout): None
+* Parameters (out):   None
+* Return value:       None
+* Description:        Function to Handle User Main Option from First MCU
+********************************************************************************/
+void OPERATIONS_II_Main_Options(void);
+/*******************************************************************************
+* Service Name:       OPERATIONS_II_UART_HANDLE
+* Sync/Async:         Synchronous
+* Reentrancy:         Non-Reentrant
 * Parameters (in):    None
 * Parameters (inout): None
 * Parameters (out):   None
